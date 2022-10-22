@@ -1,0 +1,6 @@
+Section 1: Thread management guide
+- The order of function/callable object isn't depend on the order of called constructor.
+- Thread with default constructor is not a joinable thread. the default constructed thread doesn't not represent an active thread of execution. So get_id() for thread should return 0.
+- RAII
+- Have to careful when detaching threads after passing reference to the variable.
+- We cannot transfer ownership while left side variable of this operation owning a thread.
