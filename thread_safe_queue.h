@@ -26,16 +26,8 @@ public:
 	void push(T& value)
 	{
 		std::lock_guard<std::mutex> lg(m);
-		if (queue.empty())
-		{
-			return std::make_shared<T>();
-		}
-		else
-		{
-			std::shared_ptr<T> ref(queue.front());
-			queue.pop();
-			return ref;
-		}
+		queue.push(std::make_shared<T>(value));
+		cv.notify_one();
 	}
 
 	bool empty()
@@ -46,7 +38,7 @@ public:
 
 	std::shared_ptr<T> wait_pop()
 	{
-		std::unique_lock<std::mutex> lg(m);//using unique_lock for conditional variable, since wait will unlock mutex. We can't use lock_guard.
+		std::unique_lock<std::mutex> lg(m);//using unique_lock for conditional variable, since wait function will unlock mutex. We can't use lock_guard.
 		cv.wait(lg, [this]
 			{
 				return !queue.empty();
